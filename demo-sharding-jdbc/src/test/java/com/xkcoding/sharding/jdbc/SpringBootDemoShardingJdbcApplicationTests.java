@@ -4,8 +4,10 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.xkcoding.sharding.jdbc.mapper.OrderItemMapper;
 import com.xkcoding.sharding.jdbc.mapper.OrderMapper;
 import com.xkcoding.sharding.jdbc.model.Order;
+import com.xkcoding.sharding.jdbc.model.OrderItem;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,8 @@ import java.util.List;
 public class SpringBootDemoShardingJdbcApplicationTests {
     @Autowired
     private OrderMapper orderMapper;
+    @Autowired
+    private OrderItemMapper orderItemMapper;
 
     /**
      * 测试新增
@@ -39,6 +43,12 @@ public class SpringBootDemoShardingJdbcApplicationTests {
             for (long j = 1; j < 20; j++) {
                 Order order = Order.builder().userId(i).orderId(j).remark(RandomUtil.randomString(20)).build();
                 orderMapper.insert(order);
+            }
+        }
+        for (long i = 1; i < 10; i++) {
+            for (long j = 1; j < 20; j++) {
+                OrderItem orderItem = OrderItem.builder().userId(i).orderId(j).remark(RandomUtil.randomString(20)).build();
+                orderItemMapper.insert(orderItem);
             }
         }
     }
@@ -66,8 +76,10 @@ public class SpringBootDemoShardingJdbcApplicationTests {
      */
     @Test
     public void testSelect() {
-        List<Order> orders = orderMapper.selectList(Wrappers.<Order>query().lambda().in(Order::getOrderId, 1, 2));
-        log.info("【orders】= {}", JSONUtil.toJsonStr(orders));
+        /*List<Order> orders = orderMapper.selectList(Wrappers.<Order>query().lambda().in(Order::getOrderId, 1, 2));
+        log.info("【orders】= {}", JSONUtil.toJsonStr(orders));*/
+        List<OrderItem> orderList = orderItemMapper.selectList(Wrappers.<OrderItem>query().lambda().in(OrderItem::getOrderId, 1, 2));
+        log.info("【orderList】= {}", JSONUtil.toJsonStr(orderList));
     }
 
 }
